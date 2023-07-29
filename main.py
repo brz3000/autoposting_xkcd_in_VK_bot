@@ -4,7 +4,7 @@ import requests
 import random
 
 
-def get_image_and_comment(url):
+def get_comics(url):
     response = requests.get(url)
     response.raise_for_status()
     comic_book = response.json()
@@ -16,7 +16,7 @@ def get_image_and_comment(url):
     return comment
 
 
-def post_photo(token, group_id, comment):
+def post_comics(token, group_id, comment):
     url = 'https://api.vk.com/method/photos.getWallUploadServer'
     params = {'v': '5.131',
               'access_token': token,
@@ -68,7 +68,7 @@ def main():
     group_id = os.environ['VK_GROUP_ID']
     random_number = random.randrange(1, 2808, 1)
     url = f'https://xkcd.com/{random_number}/info.0.json'
-    post_photo(token, group_id, get_image_and_comment(url))
+    post_comics(token, group_id, get_comics(url))
     os.remove('image.png')
 
 

@@ -11,6 +11,7 @@ def get_comics(url):
     comment = comic_book['alt']
     image_url = comic_book['img']
     response = requests.get(image_url)
+    response.raise_for_status()
     with open('image.png', 'wb') as file:
         file.write(response.content)
     return comment

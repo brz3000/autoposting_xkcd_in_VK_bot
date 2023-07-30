@@ -30,7 +30,7 @@ def post_comics(token, group_id, comment):
         url = server_address
         files = {"file1": file}
         response = requests.post(url, files=files)
-        response.raise_for_status()
+    response.raise_for_status()
     payload_photo = response.json()
     server = payload_photo['server']
     photo = payload_photo['photo']

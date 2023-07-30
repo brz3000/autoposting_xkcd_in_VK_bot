@@ -17,17 +17,19 @@ def get_comic_book(url):
     return comment
 
 
-def post_comic_book(token, group_id, comment):
+def get_server_address(token, group_id):
     url = 'https://api.vk.com/method/photos.getWallUploadServer'
     params = {'v': '5.131',
               'access_token': token,
               'group_id': group_id}
     response = requests.get(url, params=params)
     response.raise_for_status()
-    server_address = response.json()['response']['upload_url']
+    return response.json()['response']['upload_url']
 
+
+def upload_photo(token, group_id):
     with open('image.png', 'rb') as file:
-        url = server_address
+        url = get_server_address(token, group_id)
         files = {"file1": file}
         response = requests.post(url, files=files)
     response.raise_for_status()
@@ -35,6 +37,11 @@ def post_comic_book(token, group_id, comment):
     server = photo_payload['server']
     photo = photo_payload['photo']
     hash_parameter = photo_payload['hash']
+    return server, photo, hash_parameter
+
+
+def save_comic_book(token, group_id):
+    server, photo, hash_parameter = upload_photo(token, group_id)
     url = 'https://api.vk.com/method/photos.saveWallPhoto'
     params = {'server': server,
               'photo': photo,
@@ -48,16 +55,17 @@ def post_comic_book(token, group_id, comment):
     save_wall_photo_payload = response.json()
     owner_id = save_wall_photo_payload['response'][0]['owner_id']
     media_id = save_wall_photo_payload['response'][0]['id']
-    attachments = f'photo{owner_id}_{media_id}'
+    return f'photo{owner_id}_{media_id}'
 
+
+def post_comic_book(token, group_id, comment):
     url = 'https://api.vk.com/method/wall.post'
     params = {'v': '5.131',
               'access_token': token,
               'group_id': group_id,
               'owner_id': f'-{group_id}',
               'from_group': 0,
-              'attachments': attachments,
-              'media_id': media_id,
+              'attachments': save_comic_book(token, group_id),
               'message': comment}
     response = requests.post(url, params=params)
     response.raise_for_status()

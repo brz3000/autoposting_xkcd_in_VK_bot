@@ -4,7 +4,7 @@ import requests
 import random
 
 
-def get_comics(url):
+def get_comic_book(url):
     response = requests.get(url)
     response.raise_for_status()
     comic_book = response.json()
@@ -17,7 +17,7 @@ def get_comics(url):
     return comment
 
 
-def post_comics(token, group_id, comment):
+def post_comic_book(token, group_id, comment):
     url = 'https://api.vk.com/method/photos.getWallUploadServer'
     params = {'v': '5.131',
               'access_token': token,
@@ -31,23 +31,23 @@ def post_comics(token, group_id, comment):
         files = {"file1": file}
         response = requests.post(url, files=files)
     response.raise_for_status()
-    payload_photo = response.json()
-    server = payload_photo['server']
-    photo = payload_photo['photo']
-    hash = payload_photo['hash']
+    photo_payload = response.json()
+    server = photo_payload['server']
+    photo = photo_payload['photo']
+    hash_parameter = photo_payload['hash']
     url = 'https://api.vk.com/method/photos.saveWallPhoto'
     params = {'server': server,
               'photo': photo,
-              'hash': hash,
+              'hash': hash_parameter,
               'group_id': group_id,
               'access_token': token,
               'v': '5.131'
               }
     response = requests.post(url, params=params)
     response.raise_for_status()
-    payload_save_wall_photo = response.json()
-    owner_id = payload_save_wall_photo['response'][0]['owner_id']
-    media_id = payload_save_wall_photo['response'][0]['id']
+    save_wall_photo_payload = response.json()
+    owner_id = save_wall_photo_payload['response'][0]['owner_id']
+    media_id = save_wall_photo_payload['response'][0]['id']
     attachments = f'photo{owner_id}_{media_id}'
 
     url = 'https://api.vk.com/method/wall.post'
@@ -69,7 +69,7 @@ def main():
     group_id = os.environ['VK_GROUP_ID']
     random_number = random.randrange(1, 2808, 1)
     url = f'https://xkcd.com/{random_number}/info.0.json'
-    post_comics(token, group_id, get_comics(url))
+    post_comic_book(token, group_id, get_comic_book(url))
     os.remove('image.png')
 
 

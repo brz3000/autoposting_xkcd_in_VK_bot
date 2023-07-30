@@ -31,10 +31,10 @@ def post_comics(token, group_id, comment):
         files = {"file1": file}
         response = requests.post(url, files=files)
         response.raise_for_status()
-        payload_photo = response.json()
-        server = payload_photo['server']
-        photo = payload_photo['photo']
-        hash = payload_photo['hash']
+    payload_photo = response.json()
+    server = payload_photo['server']
+    photo = payload_photo['photo']
+    hash = payload_photo['hash']
     url = 'https://api.vk.com/method/photos.saveWallPhoto'
     params = {'server': server,
               'photo': photo,

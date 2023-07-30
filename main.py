@@ -70,7 +70,10 @@ def main():
     random_number = random.randrange(1, 2808, 1)
     url = f'https://xkcd.com/{random_number}/info.0.json'
     post_comic_book(token, group_id, get_comic_book(url))
-    os.remove('image.png')
+    try:
+        os.remove('image.png')
+    except FileNotFoundError:
+        pass
 
 
 if __name__ == '__main__':
